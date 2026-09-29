@@ -127,8 +127,9 @@ Xây dựng hệ thống cho phép:
 
 
 
-## 7. Thành viên nhóm
+## 7. Thành viên nhóm  
 - Trần Văn Anh Khoa
 - Trần Công Hậu
 
 ## Hình ảnh sơ đồ use case
+ ![Class Diagram](images/use-case.drawio.png)
