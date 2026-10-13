@@ -30,6 +30,21 @@ Phần mềm giúp cửa hàng sửa xe máy quản lý việc tiếp nhận xe,
 
 **Chức năng tự động của hệ thống:**
 - Gửi nhắc bảo dưỡng cho khách khi xe đến hạn.
+
+## 3 . Hình ảnh use-case
+
+
+![Sơ đồ use-case](img.use-case.png)
+
+## 4 . Gọi phương thức Uce-case
+UC01 — Tiếp nhận xe: gọi phương thức khởi tạo (constructor) của lớp PhieuTiepNhan
+UC02 — Ghi nhận dịch vụ bảo dưỡng: gọi phương thức themDichVu(dv) của lớp PhieuTiepNhan
+UC03 — Lập hoá đơn: gọi phương thức taoHoaDon() của lớp PhieuTiepNhan → phương thức này gọi tiếp xuatHoaDon() của lớp HoaDon
+UC04 — Tra cứu lịch sử sửa chữa: gọi phương thức xemLichSu(xe) của lớp NhanVien
+UC05 — Quản lý danh mục dịch vụ & giá: gọi phương thức themDichVu(dv) / suaDichVu(dv) của lớp QuanLy
+UC06 — Quản lý nhân viên: gọi phương thức themNhanVien(nv) của lớp QuanLy
+UC07 — Xem báo cáo doanh thu: gọi phương thức xemBaoCaoDoanhThu() của lớp QuanLy → gọi tiếp tinhTongDoanhThu() của lớp BaoCaoDoanhThu
+UC08 — Nhắc khách bảo dưỡng định kỳ: gọi phương thức tinhLichNhacTiepTheo() của lớp DichVuBaoDuong (thực thi bởi lớp con tương ứng, ví dụ ThayNhot)
  
 ## 3. Hình ảnh class diagram
  
