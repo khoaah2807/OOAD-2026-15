@@ -46,11 +46,11 @@ UC06 — Quản lý nhân viên: gọi phương thức themNhanVien(nv) của l�
 UC07 — Xem báo cáo doanh thu: gọi phương thức xemBaoCaoDoanhThu() của lớp QuanLy → gọi tiếp tinhTongDoanhThu() của lớp BaoCaoDoanhThu
 UC08 — Nhắc khách bảo dưỡng định kỳ: gọi phương thức tinhLichNhacTiepTheo() của lớp DichVuBaoDuong (thực thi bởi lớp con tương ứng, ví dụ ThayNhot)
  
-## 3. Hình ảnh class diagram
+## 5. Hình ảnh class diagram
  
 ![Sơ đồ lớp](img.class-diagram.png)
 
-## 4. Mô tả các lớp và quan hệ
+## 6. Mô tả các lớp và quan hệ
 
 | Lớp | Vai trò |
 |-----|---------|
