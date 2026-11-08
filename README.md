@@ -189,4 +189,139 @@ Báo cáo tổng tiền thu được trong một khoảng ngày, do Quản lý t
 | denNgay | Date | Ngày kết thúc tính |
 | tongDoanhThu | double | Tổng tongTien của các hóa đơn trong khoảng ngày |
 | lapBaoCao() | void | Cộng các hóa đơn và tạo báo cáo |
+# Sơ đồ trạng thái (State Diagram)
+
+Hệ thống quản lý cửa hàng bảo dưỡng – sửa chữa xe máy
+
+## 1. Đối tượng được chọn: PhieuTiepNhan
+
+Mỗi lần xe vào tiệm, hệ thống tạo 1 **phiếu tiếp nhận**. Phiếu này đi qua nhiều giai đoạn từ lúc nhận xe đến lúc khách trả tiền, và lớp `PhieuTiepNhan` có sẵn thuộc tính `trangThai`. Vì vậy đây là đối tượng phù hợp nhất để vẽ sơ đồ trạng thái.
+
+## 2. Các trạng thái
+
+| Trạng thái | Ý nghĩa | Giá trị `trangThai` |
+|-----------|---------|---------------------|
+| Đã tiếp nhận | Xe vừa vào tiệm, đã tạo phiếu, chưa bắt đầu làm | "Đã tiếp nhận" |
+| Đang sửa | Thợ đang làm, nhân viên ghi dịch vụ vào phiếu | "Đang sửa" |
+| Đã hoàn thành | Làm xong tất cả dịch vụ, chờ khách thanh toán | "Đã hoàn thành" |
+| Đã thanh toán | Khách đã trả tiền, hóa đơn đã lập | "Đã thanh toán" |
+| Đã hủy | Khách không làm nữa | "Đã hủy" |
+
+## 3. Sơ đồ
+
+![State sơ đồ](stateimguml.png)
+
+## 4. Bảng chuyển trạng thái
+
+| Từ trạng thái | Sự kiện | Điều kiện (guard) | Sang trạng thái | Hành động |
+|---------------|---------|-------------------|-----------------|-----------|
+| (bắt đầu) | Nhân viên nhận xe | Đã nhập thông tin khách và xe | Đã tiếp nhận | `taoPhieu()`: tạo phiếu, lưu ngày tiếp nhận |
+| Đã tiếp nhận | Thợ bắt đầu sửa | Không có | Đang sửa | Cập nhật `trangThai` |
+| Đang sửa | Thêm dịch vụ | Không có | Đang sửa (giữ nguyên) | `themDichVu()`: tạo thêm 1 `ChiTietDichVu` |
+| Đang sửa | Làm xong | Phiếu có ít nhất 1 dịch vụ | Đã hoàn thành | Cập nhật `trangThai` |
+| Đã hoàn thành | Khách thanh toán | Thanh toán thành công | Đã thanh toán | `lapHoaDon()`: tạo hóa đơn |
+| Đã tiếp nhận hoặc Đang sửa | Khách hủy | Chưa lập hóa đơn | Đã hủy | Cập nhật `trangThai` |
+
+## 5. Giải thích ký hiệu
+
+| Ký hiệu | Ý nghĩa |
+|---------|---------|
+| `[*]` đầu sơ đồ | Điểm bắt đầu: đối tượng vừa được tạo ra |
+| Hình bo tròn | Một **trạng thái**: giai đoạn mà đối tượng đang ở |
+| Mũi tên | **Chuyển trạng thái**: đối tượng đổi từ trạng thái này sang trạng thái khác |
+| Chữ trên mũi tên | **Sự kiện** làm đổi trạng thái (hoặc phương thức được gọi) |
+| `[ ... ]` | **Điều kiện** (guard): phải đúng thì mới được chuyển |
+| `[*]` cuối sơ đồ | Điểm kết thúc: phiếu không đổi trạng thái nữa |
+| Mũi tên quay về chính nó | Sự kiện xảy ra nhưng trạng thái không đổi (thêm dịch vụ khi đang sửa) |
+
+## 6. Liên hệ với sơ đồ lớp
+
+- Thuộc tính `trangThai : String` của `PhieuTiepNhan` lưu trạng thái hiện tại.
+- Các phương thức `taoPhieu()`, `themDichVu()` của `PhieuTiepNhan` và `lapHoaDon()` của `HoaDon` chính là những sự kiện làm phiếu đổi trạng thái.
+- Phiếu đã ở trạng thái **Đã thanh toán** hoặc **Đã hủy** thì không được sửa nữa.
+# Activity Diagram — Hệ thống quản lý cửa hàng sửa xe máy
+
+Nhóm chọn 2 use case có luồng xử lý rõ ràng (có vòng lặp / rẽ nhánh) để vẽ Activity Diagram:
+- **UC02 — Ghi nhận dịch vụ bảo dưỡng**
+- **UC08 — Nhắc khách bảo dưỡng định kỳ**
+
+## 1. Ký hiệu sử dụng
+
+| Ký hiệu | Tên | Ý nghĩa |
+|---|---|---|
+| ● | Initial Node | Điểm bắt đầu luồng |
+| Hình chữ nhật bo góc | Action | Một bước xử lý |
+| ◆ có điều kiện | Decision | Rẽ nhánh theo điều kiện (Có/Không) |
+| ◆ không điều kiện | Merge | Gộp các nhánh về một luồng |
+| ◎ | Final Node | Điểm kết thúc luồng |
+| Mũi tên | Control Flow | Thứ tự thực hiện |
+
+## 2. UC02 — Ghi nhận dịch vụ bảo dưỡng
+
+![Activity Diagram UC02](images/activity_uc02.png)
+
+**Mô tả luồng:**
+1. Nhân viên chọn phiếu tiếp nhận đang xử lý (đã tạo ở UC01).
+2. Chọn dịch vụ cần thêm, nhập số lượng / đơn giá → tạo một `ChiTietDichVu`.
+3. Hệ thống hỏi **"Còn dịch vụ cần thêm?"**
+   - **Có**: quay lại bước chọn dịch vụ (vòng lặp) — một phiếu có thể gồm nhiều dịch vụ.
+   - **Không**: đi tiếp.
+4. Tính tổng chi phí — gọi UC03 Lập hoá đơn (quan hệ **include**: luôn thực hiện).
+5. Lưu phiếu tiếp nhận, kết thúc.
+
+## 3. UC08 — Nhắc khách bảo dưỡng định kỳ
+
+![Activity Diagram UC08](images/activity_uc08.png)
+
+**Mô tả luồng:**
+1. Sau khi UC02 hoàn tất, hệ thống kiểm tra chu kỳ khuyến nghị của dịch vụ vừa thực hiện (quan hệ **extend**: chỉ chạy khi có điều kiện).
+2. Hệ thống xét **"Đã đến/gần đến hạn?"**
+   - **Có**: thêm khách vào danh sách cần nhắc → nhân viên gọi/gửi thông báo cho khách.
+   - **Không**: bỏ qua, không làm gì.
+3. Hai nhánh gộp lại tại điểm Merge, rồi kết thúc.
+# Sơ đồ trình tự (Sequence Diagram)
+
+## 1. Quá trình được vẽ: Lập hóa đơn
+
+Sơ đồ chỉ mô tả **một quá trình**: nhân viên lập hóa đơn cho một phiếu tiếp nhận đã làm xong (use case Lập hóa đơn).
+
+![Sơ đồ trình tự Lập hóa đơn](sequence_lap_hoa_don.png)
+
+## 2. Các đối tượng (hộp trên cùng, dạng `tên đối tượng : tên lớp`)
+
+| Đối tượng | Lớp | Vai trò trong quá trình |
+|-----------|-----|-------------------------|
+| `nv : NhanVien` | NhanVien | Nhân viên thực hiện việc lập hóa đơn |
+| `p : PhieuTiepNhan` | PhieuTiepNhan | Phiếu cần lập hóa đơn |
+| `ct : ChiTietDichVu` | ChiTietDichVu | Một dòng dịch vụ trong phiếu |
+| `hd : HoaDon` | HoaDon | Hóa đơn được tạo ra |
+
+## 3. Các thông điệp theo thứ tự
+
+| Bước | Từ | Đến | Thông điệp | Ý nghĩa |
+|------|----|-----|-----------|---------|
+| 1 | nv | hd | `lapHoaDon(p)` | Nhân viên yêu cầu lập hóa đơn cho phiếu p |
+| 2 | hd | p | `layChiTietDichVu()` | Hóa đơn lấy các dòng dịch vụ của phiếu |
+| 3 | p | hd | `danhSachChiTiet` (trả về) | Phiếu trả danh sách dòng dịch vụ |
+| 4 | hd | ct | `tinhThanhTien()` | Lặp cho từng dòng dịch vụ: tính số lượng × đơn giá |
+| 5 | ct | hd | `thanhTien` (trả về) | Dòng dịch vụ trả thành tiền |
+| 6 | hd | hd | `tinhTongTien()` | Hóa đơn tự cộng các thành tiền ra tổng tiền |
+| 7 | hd | p | `capNhatTrangThai("Đã thanh toán")` | Đổi trạng thái phiếu |
+| 8 | hd | nv | `hoaDonDaLap` (trả về) | Báo cho nhân viên hóa đơn đã được lưu |
+| 9 | nv | hd | `inHoaDon()` | Nhân viên in hóa đơn đưa khách |
+
+## 4. Ký hiệu cần vẽ
+
+| Ký hiệu | Ý nghĩa |
+|---------|---------|
+| Hộp ở đầu cột | Đối tượng, ghi `tên đối tượng : tên lớp` |
+| Đường nét đứt đi xuống | Đường sống (lifeline) của đối tượng |
+| Mũi tên nét liền | Thông điệp gọi phương thức |
+| Mũi tên nét đứt | Thông điệp trả về |
+| Mũi tên quay về chính nó | Đối tượng tự gọi phương thức (bước 6) |
+| Khung `loop` | Phần lặp lại nhiều lần |
+
+## 5. Liên hệ với sơ đồ lớp
+
+Các thông điệp phải là phương thức có trong lớp nhận: `lapHoaDon()`, `tinhTongTien()`, `inHoaDon()` thuộc `HoaDon`; `layChiTietDichVu()`, `capNhatTrangThai()` thuộc `PhieuTiepNhan`; `tinhThanhTien()` thuộc `ChiTietDichVu`.
 
